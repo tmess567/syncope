@@ -30,7 +30,7 @@ import org.apache.syncope.client.console.commons.SortableDataProviderComparator;
 import org.apache.syncope.client.console.panels.ConnObjectDirectoryPanel.ConnObjectDataProvider;
 import org.apache.syncope.client.console.rest.ResourceRestClient;
 import org.apache.syncope.client.console.wicket.extensions.markup.html.repeater.data.table.ActionColumn;
-import org.apache.syncope.client.console.wicket.extensions.markup.html.repeater.data.table.AttrColumn;
+import org.apache.syncope.client.console.wicket.extensions.markup.html.repeater.data.table.ConnObjectAttrColumn;
 import org.apache.syncope.client.console.wicket.markup.html.bootstrap.dialog.BaseModal;
 import org.apache.syncope.client.console.wicket.markup.html.form.ActionLink;
 import org.apache.syncope.client.console.wicket.markup.html.form.ActionLinksPanel;
@@ -101,9 +101,9 @@ public abstract class ConnObjectDirectoryPanel
     protected List<IColumn<ConnObjectTO, String>> getColumns() {
         final List<IColumn<ConnObjectTO, String>> columns = new ArrayList<>();
 
-        columns.add(new AttrColumn<>(ConnIdSpecialAttributeName.UID, SchemaType.PLAIN));
-        columns.add(new AttrColumn<>(ConnIdSpecialAttributeName.NAME, SchemaType.PLAIN));
-        columns.add(new AttrColumn<>(ConnIdSpecialAttributeName.ENABLE, SchemaType.PLAIN));
+        columns.add(new ConnObjectAttrColumn(ConnIdSpecialAttributeName.UID, SchemaType.PLAIN));
+        columns.add(new ConnObjectAttrColumn(ConnIdSpecialAttributeName.NAME, SchemaType.PLAIN));
+        columns.add(new ConnObjectAttrColumn(ConnIdSpecialAttributeName.ENABLE, SchemaType.PLAIN));
 
         columns.add(new ActionColumn<ConnObjectTO, String>(new ResourceModel("actions")) {
 
