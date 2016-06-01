@@ -31,8 +31,11 @@ import org.apache.syncope.common.lib.patch.AttrPatch;
 import org.apache.syncope.common.lib.patch.MembershipPatch;
 import org.apache.syncope.common.lib.patch.UserPatch;
 import org.apache.syncope.common.lib.to.AttrTO;
+import org.apache.syncope.common.lib.to.GroupTO;
 import org.apache.syncope.common.lib.to.MembershipTO;
+import org.apache.syncope.common.lib.to.TypeExtensionTO;
 import org.apache.syncope.common.lib.to.UserTO;
+import org.apache.syncope.common.lib.types.AnyTypeKind;
 import org.apache.syncope.common.lib.types.ClientExceptionType;
 import org.apache.syncope.common.lib.types.PatchOperation;
 import org.apache.syncope.fit.AbstractITCase;
@@ -158,5 +161,46 @@ public class MembershipITCase extends AbstractITCase {
         assertNotNull(user.getKey());
 
         userService.delete(user.getKey());
+    }
+
+    @Test
+    public void onGroupDelete() {
+        // pre: create group with type extension
+        TypeExtensionTO typeExtension = new TypeExtensionTO();
+        typeExtension.setAnyType(AnyTypeKind.USER.name());
+        typeExtension.getAuxClasses().add("csv");
+        typeExtension.getAuxClasses().add("other");
+
+        GroupTO groupTO = GroupITCase.getBasicSampleTO("typeExt");
+        groupTO.getTypeExtensions().add(typeExtension);
+        groupTO = createGroup(groupTO).getAny();
+        assertNotNull(groupTO);
+
+        // pre: create user with membership to such group
+        UserTO user = UserITCase.getUniqueSampleTO("typeExt@apache.org");
+
+        MembershipTO membership = new MembershipTO.Builder().group(groupTO.getKey()).build();
+        membership.getPlainAttrs().add(new AttrTO.Builder().schema("aLong").value("1454").build());
+        user.getMemberships().add(membership);
+
+        user = createUser(user).getAny();
+
+        // verify that 'aLong' is correctly populated for user's membership
+        assertEquals(1, user.getMemberships().size());
+        membership = user.getMembershipMap().get(groupTO.getKey());
+        assertNotNull(membership);
+        assertEquals(1, membership.getPlainAttrMap().get("aLong").getValues().size());
+        assertEquals("1454", membership.getPlainAttrMap().get("aLong").getValues().get(0));
+
+        // verify that derived attrbutes from 'csv' and 'other' are also populated for user's membership
+        assertFalse(membership.getDerAttrMap().get("csvuserid").getValues().isEmpty());
+        assertFalse(membership.getDerAttrMap().get("noschema").getValues().isEmpty());
+
+        // now remove the group -> all related memberships should have been removed as well
+        groupService.delete(groupTO.getKey());
+
+        // re-read user and verify that no memberships are available any more
+        user = userService.read(user.getKey());
+        assertTrue(user.getMemberships().isEmpty());
     }
 }
