@@ -42,6 +42,12 @@ public class SyncopeViewTestCase {
     private SWTBotTreeItem[] mtemplateList;
     private SWTBotTreeItem[] rtemplateList;
 
+    protected static final String ADMIN_UNAME = "admin";
+
+    protected static final String ADMIN_PWD = "password";
+
+    protected static final String ADDRESS = "http://localhost:9080/syncope/rest";
+
     @BeforeClass
     public static void beforeClass() throws Exception {
         BOT = new SWTWorkbenchBot();
@@ -66,9 +72,9 @@ public class SyncopeViewTestCase {
     public void canLoginAdmin() throws Exception {
         SWTBotShell loginShell = BOT.activeShell();
         loginShell.activate();
-        BOT.textWithLabel("Deployment Url").setText("http://localhost:9080/syncope/rest/");
-        BOT.textWithLabel("Username").setText("admin");
-        BOT.textWithLabel("Password").setText("password");
+        BOT.textWithLabel("Deployment Url").setText(ADDRESS);
+        BOT.textWithLabel("Username").setText(ADMIN_UNAME);
+        BOT.textWithLabel("Password").setText(ADMIN_PWD);
         BOT.button("Login").click();
         BOT.waitWhile(new ICondition() {
 
@@ -90,7 +96,7 @@ public class SyncopeViewTestCase {
     }
 
     @Test
-    public void hasCorrectTemplates() throws Exception{
+    public void hasCorrectTemplates() throws Exception {
         syncopeView = BOT.viewByTitle("Apache Syncope Templates");
         mTemplateItem = syncopeView.bot().tree().expandNode("Mail Templates");
         rTemplateItem = syncopeView.bot().tree().expandNode("Report Templates");
@@ -212,7 +218,7 @@ public class SyncopeViewTestCase {
 
         mNewTemplate.setFocus();
         mNewTemplate.select().contextMenu("Remove template").click();
-
+        BOT.sleep(1000);
         // wait for template keys reload
         BOT.waitWhile(new ICondition() {
 
@@ -250,7 +256,7 @@ public class SyncopeViewTestCase {
 
         rNewTemplate.setFocus();
         rNewTemplate.select().contextMenu("Remove template").click();
-
+        BOT.sleep(1000);
         // wait for template keys reload
         BOT.waitWhile(new ICondition() {
 
