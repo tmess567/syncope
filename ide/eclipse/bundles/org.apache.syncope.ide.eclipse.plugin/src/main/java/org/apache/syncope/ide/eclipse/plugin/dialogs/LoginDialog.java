@@ -59,6 +59,7 @@ public class LoginDialog extends TitleAreaDialog {
     public void create() {
         super.create();
         setTitle("Login to Apache Syncope");
+        setBlockOnOpen(true);
     }
 
     @Override

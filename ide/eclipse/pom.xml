@@ -39,6 +39,7 @@ under the License.
 
   <modules>
     <module>bundles/org.apache.syncope.ide.eclipse.plugin</module>
+    <module>bundles/org.apache.syncope.ide.eclipse.tests</module>
     <module>releng/org.apache.syncope.ide.eclipse.site</module>
   </modules>
 

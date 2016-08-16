@@ -24,6 +24,13 @@ before_install:
   - echo 'MAVEN_OPTS="-Xms512m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m"' >~/.mavenrc
 # default install is mvn install --quiet -DskipTests=true
 install: mvn --show-version --quiet -P all,skipTests
+# window manager and xvfb for eclipse tests
+before_script:
+  - "export DISPLAY=:99.0"
+  - sh -e /etc/init.d/xvfb start
+  - sleep 10 # give xvfb some time to start
+  - metacity --sm-disable --replace &
+  - sleep 10 # give metacity some time to start
 script:
   #invoker.streamLogs: we cannot access to log files through Travis web ui, so display everything in the console
   - mvn --show-version --quiet clean install -Dinvoker.streamLogs=true
